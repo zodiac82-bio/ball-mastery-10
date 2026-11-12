@@ -1,0 +1,83 @@
+.panel {
+  padding: 14px;
+  text-align: center;
+}
+.phase {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--mute);
+}
+.big,
+.bigWork {
+  font-size: 96px;
+  font-weight: 800;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.bigWork {
+  color: var(--accent);
+}
+.bar {
+  height: 10px;
+  background: var(--bg);
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 8px 0 10px;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  width: 0;
+  transition: width 1s linear;
+}
+.set {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  min-height: 26px;
+}
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: -4px;
+}
+.buttons > * {
+  margin: 4px;
+}
+
+/* 세로 화면: 애니메이션 위에 낮게 깔리도록 가로로 눕힌다 */
+@media (orientation: portrait), (max-width: 699px) {
+  .panel {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-column-gap: 16px;
+    column-gap: 16px;
+    align-items: center;
+    text-align: left;
+  }
+  .big,
+  .bigWork {
+    grid-row: 1 / span 3;
+    font-size: 84px;
+    min-width: 1.3em;
+    text-align: center;
+  }
+  .phase {
+    grid-column: 2;
+  }
+  .bar {
+    grid-column: 2;
+    margin: 6px 0;
+  }
+  .set {
+    grid-column: 2;
+    margin-bottom: 0;
+  }
+  .buttons {
+    grid-column: 1 / span 2;
+    justify-content: flex-start;
+    margin-top: 8px;
+  }
+}

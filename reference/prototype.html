@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>볼마스터리 10</title>
+<style>
+  :root{--bg:#0f1a14;--card:#17261d;--line:#2a3d31;--txt:#eef5f0;--mute:#9fb4a6;--accent:#c8f25a;--R:#3b7bf0;--L:#f28c28;}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;}
+  button{font:inherit;color:inherit;border:0;cursor:pointer}
+  .wrap{max-width:980px;margin:0 auto;padding:20px 16px 40px}
+  header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  h1{font-size:26px;margin:0;letter-spacing:-.5px}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--mute);font-size:14px;margin-top:4px}
+  .btn{background:var(--accent);color:#13200f;font-weight:700;padding:11px 16px;border-radius:12px}
+  .btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px;text-align:left;position:relative}
+  .card svg{width:100%;height:auto;border-radius:10px;display:block}
+  .card .no{font-size:12px;color:var(--accent);font-weight:800;margin-top:8px}
+  .card .nm{font-size:16px;font-weight:700;margin-top:2px}
+  .card .en{font-size:12px;color:var(--mute)}
+  .card .done{position:absolute;top:16px;right:16px;background:var(--accent);color:#13200f;font-size:11px;font-weight:800;padding:3px 7px;border-radius:999px}
+  .tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:999px;padding:1px 7px;color:var(--mute);margin-left:4px;vertical-align:middle}
+  /* detail */
+  .detail{display:none}
+  .detail.on{display:block}
+  .home.off{display:none}
+  .top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+  .back{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:9px 13px}
+  .dl{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px}
+  @media (max-width:720px){.dl{grid-template-columns:1fr}}
+  .stage{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;position:relative}
+  .stage svg{width:100%;height:auto;display:block;border-radius:12px}
+  .cap{font-size:20px;font-weight:700;text-align:center;min-height:30px;margin:10px 0 4px}
+  .dots{display:flex;justify-content:center;gap:6px;flex-wrap:wrap}
+  .dots i{width:8px;height:8px;border-radius:50%;background:var(--line);display:block}
+  .dots i.on{background:var(--accent)}
+  .ctrl{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;justify-content:center}
+  .seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .seg button{padding:8px 11px;background:transparent;font-size:14px;color:var(--mute)}
+  .seg button.on{background:var(--line);color:var(--txt);font-weight:700}
+  .info h2{margin:0;font-size:24px}
+  .info .en{color:var(--mute);margin-top:2px}
+  .info .meta{margin:10px 0 14px;color:var(--accent);font-weight:700}
+  .tips{list-style:none;padding:0;margin:0 0 16px}
+  .tips li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px;font-size:15px;line-height:1.45}
+  .tips li b{color:var(--accent)}
+  .legend{display:flex;gap:14px;font-size:13px;color:var(--mute);margin-bottom:14px}
+  .legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;background:var(--c)}
+  /* timer overlay */
+  .timer{display:none;margin-top:4px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center}
+  .timer.on{display:block}
+  .tphase{font-size:15px;color:var(--mute)}
+  .tbig{font-size:64px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums}
+  .tbig.work{color:var(--accent)}
+  .tset{font-size:14px;color:var(--mute);margin-bottom:10px}
+  .bar{height:6px;background:var(--bg);border-radius:6px;overflow:hidden;margin:8px 0 12px}
+  .bar i{display:block;height:100%;background:var(--accent);width:0}
+  .foot{color:var(--mute);font-size:12px;margin-top:24px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="home" id="home">
+    <header>
+      <div>
+        <h1>볼마스터리 <span>10</span></h1>
+        <div class="sub">동작을 골라 애니메이션을 보고, 30초 × 3세트로 따라 해요</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="routineBtn">▶ 전체 루틴 시작</button>
+      </div>
+    </header>
+    <div class="grid" id="grid"></div>
+    <div class="foot">위에서 내려다본 모습 · <b style="color:var(--R)">파란 발 = 오른발</b> · <b style="color:var(--L)">주황 발 = 왼발</b></div>
+  </section>
+
+  <section class="detail" id="detail">
+    <div class="top">
+      <button class="back" id="backBtn">← 목록</button>
+      <div style="flex:1"></div>
+      <button class="back" id="prevBtn">◀</button>
+      <button class="back" id="nextBtn">▶</button>
+    </div>
+    <div class="dl">
+      <div>
+        <div class="stage">
+          <svg id="stage" viewBox="0 0 300 330"></svg>
+          <div class="cap" id="cap"></div>
+          <div class="dots" id="dots"></div>
+          <div class="ctrl">
+            <div class="seg" id="speedSeg">
+              <button data-v="0.5">천천히</button><button data-v="1" class="on">보통</button><button data-v="1.5">빠르게</button>
+            </div>
+            <div class="seg" id="sideSeg">
+              <button data-v="R" class="on">오른발</button><button data-v="L">왼발</button>
+            </div>
+            <div class="seg"><button id="pauseBtn">⏸ 멈춤</button><button id="soundBtn">🔇 소리</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="info">
+        <h2 id="dName"></h2>
+        <div class="en" id="dEn"></div>
+        <div class="meta" id="dMeta"></div>
+        <div class="legend"><span style="--c:var(--R)">오른발</span><span style="--c:var(--L)">왼발</span><span style="--c:#fff">공</span></div>
+        <ul class="tips" id="dTips"></ul>
+        <button class="btn" id="startBtn" style="width:100%">▶ 30초 × 3세트 시작</button>
+        <div class="timer" id="timer">
+          <div class="tphase" id="tPhase"></div>
+          <div class="tbig" id="tBig">0</div>
+          <div class="bar"><i id="tBar"></i></div>
+          <div class="tset" id="tSet"></div>
+          <button class="btn ghost" id="stopBtn">그만하기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function(){
+// ---------- Drill data ----------
+// Frame: [duration(s), R, L, Ball, hit, caption]  R/L = [x,y,rot,lift] ; null = keep previous
+var NR=[180,248,0,0], NL=[120,248,0,0];
+var DRILLS=[
+ {n:'탭 스텝',en:'Tap Step',lr:false,
+  tips:['발바닥 <b>앞쪽(볼)</b>으로 공 윗부분을 가볍게 톡톡','공은 움직이지 않게, 발만 빠르게 바꿔요','무릎은 살짝 굽히고 팔로 균형 잡기'],
+  ball:[150,180],
+  f:[[.26,[180,248,0,0],[150,193,0,.5],null,'L','왼발 바닥으로 공 위를 톡'],
+     [.26,[150,193,0,.5],[120,248,0,0],null,'R','오른발로 바꿔서 톡']]},
+ {n:'인사이드 스텝',en:'Inside Step',lr:false,
+  tips:['공을 <b>두 발 사이</b>에 두고 발 안쪽으로 주고받기','제자리에서 가볍게 통통 뛰며 리듬 유지','공을 보지 않고도 할 수 있을 때까지'],
+  ball:[150,232],
+  f:[[.3,[190,230,-10,.1],[95,228,0,.3],[165,232],'R','오른발 안쪽으로 톡'],
+     [.3,[205,228,0,.3],[110,230,10,.1],[135,232],'L','왼발 안쪽으로 톡']]},
+ {n:'드래그 토 스텝',en:'Drag Toe Step',lr:true,
+  tips:['발바닥으로 공을 <b>몸 쪽으로 끌고</b>','발을 뒤로 뺐다가 <b>발끝으로 앞으로 톡</b>','오른발 30초 → 왼발 30초 번갈아 연습'],
+  ball:[165,185],
+  f:[[.35,[165,198,0,.5],[115,248,0,0],[165,185],null,'오른발 바닥을 공 위에'],
+     [.35,[165,240,0,.5],null,[165,227],'R','발바닥으로 뒤로 끌기'],
+     [.25,[170,274,0,.3],[115,248,0,.2],null,null,'발을 뒤로 빼고'],
+     [.28,[165,256,0,.1],[115,248,0,0],[165,188],'R','발끝으로 앞으로 톡']]},
+ {n:'프레스 롤',en:'Press Roll',lr:true,
+  tips:['발바닥으로 공을 <b>몸 앞에서 옆으로</b> 굴리기','굴린 발은 바로 내려 딛고, 반대발이 이어받아요','공이 발에서 떨어지지 않게 천천히 시작'],
+  ball:[200,198],
+  f:[[.35,[200,212,0,.5],[130,252,0,0],[200,198],null,'오른발 바닥을 공 위에'],
+     [.45,[100,212,0,.5],null,[100,198],'R','몸 앞으로 옆으로 굴리기'],
+     [.3,[175,250,0,0],null,null,null,'오른발 제자리'],
+     [.35,null,[100,212,0,.5],null,null,'왼발 바닥을 공 위에'],
+     [.45,null,[200,212,0,.5],[200,198],'L','반대쪽으로 굴리기'],
+     [.3,null,[125,250,0,0],null,null,'왼발 제자리']]},
+ {n:'인사이드 프레스 롤',en:'Inside Press Roll',lr:false,
+  tips:['발바닥으로 공을 <b>안쪽으로 굴려 보내고</b>','반대발 <b>안쪽</b>으로 공을 멈춰요','멈춘 발이 다시 바닥으로 굴려 보내기'],
+  ball:[190,196],
+  f:[[.35,[190,210,0,.5],[105,242,0,0],[190,196],null,'오른발 바닥을 공 위에'],
+     [.35,[145,210,0,.5],null,[124,198],'R','안쪽으로 굴려 보내기'],
+     [.3,[195,242,0,0],[100,205,15,.1],[122,200],'L','왼발 안쪽으로 멈추기'],
+     [.35,null,[110,210,0,.5],[110,196],null,'왼발 바닥을 공 위에'],
+     [.35,[200,242,0,0],[155,210,0,.5],[176,198],'L','안쪽으로 굴려 보내기'],
+     [.3,[200,205,-15,.1],[105,242,0,0],[178,200],'R','오른발 안쪽으로 멈추기']]},
+ {n:'드래그 & 캐치',en:'Drag & Catch',lr:false,
+  tips:['발바닥으로 공을 <b>대각선 뒤로</b> 끌어요','반대발 <b>안쪽</b>으로 공을 잡고','그 발로 앞으로 굴려 반대 방향 반복'],
+  ball:[185,190],
+  f:[[.2,[185,204,0,.5],[115,246,0,0],[185,190],null,'오른발 바닥을 공 위에'],
+     [.45,[160,266,0,.4],null,[150,282],'R','대각선 뒤로 끌기'],
+     [.3,[190,246,0,0],[124,282,20,.1],[140,284],'L','왼발 안쪽으로 잡기'],
+     [.45,null,[115,204,0,.5],[115,190],'L','왼발 바닥으로 앞으로 굴리기'],
+     [.45,null,[140,266,0,.4],[150,282],'L','왼발로 대각선 뒤로 끌기'],
+     [.3,[176,282,-20,.1],[110,246,0,0],[160,284],'R','오른발 안쪽으로 잡기'],
+     [.45,[185,204,0,.5],null,[185,190],'R','오른발 바닥으로 앞으로 굴리기']]},
+ {n:'크로스 오버 탭',en:'Cross Over Tap',lr:false,
+  tips:['발바닥으로 공 위를 <b>톡</b> 친 뒤','그 발이 <b>공을 넘어 반대쪽</b>에 착지 (다리가 교차)','제자리로 돌아와 반대발로 반복'],
+  ball:[150,200],
+  f:[[.3,[150,213,0,.5],[115,248,0,0],null,'R','오른발로 공 위 톡'],
+     [.35,[106,214,20,0],null,null,null,'공을 넘어 왼쪽에 착지'],
+     [.3,[182,248,0,0],[120,248,0,0],null,null,'제자리로'],
+     [.3,null,[150,213,0,.5],null,'L','왼발로 공 위 톡'],
+     [.35,null,[194,214,-20,0],null,null,'공을 넘어 오른쪽에 착지'],
+     [.3,[182,248,0,0],[118,248,0,0],null,null,'제자리로']]},
+ {n:'라보나 탭',en:'Rabona Tap',lr:false,
+  tips:['차는 발이 <b>디딤발 뒤로 감아</b> 공 위를 톡','디딤발은 공 옆에 단단히','상체를 세우고 천천히 리듬부터 익히기'],
+  ball:[150,195],
+  f:[[.3,[190,256,0,.2],[172,232,0,0],null,null,'왼발 디딤, 오른발 준비'],
+     [.2,[166,270,10,.4],null,null,null,'디딤발 뒤로 감아서'],
+     [.25,[136,208,25,.5],null,null,'R','오른발로 공 위 톡'],
+     [.3,[128,232,0,0],[110,256,0,.2],null,null,'오른발 디딤, 왼발 준비'],
+     [.2,[128,232,0,0],[134,270,-10,.4],null,null,'디딤발 뒤로 감아서'],
+     [.25,null,[164,208,-25,.5],null,'L','왼발로 공 위 톡'],
+     [.3,[128,252,0,.1],[172,232,0,0],null,null,'왼발 디딤']]},
+ {n:'크로스 오버 롤',en:'Cross Over Roll',lr:false,
+  tips:['발바닥으로 공을 <b>안쪽으로 굴리고</b>','그 발이 <b>공을 넘어 반대쪽</b>에 착지','제자리로 와서 반대발로 반복'],
+  ball:[180,200],
+  f:[[.35,[180,214,0,.5],[118,248,0,0],[180,200],null,'오른발 바닥을 공 위에'],
+     [.4,[128,214,0,.5],null,[128,200],'R','안쪽으로 굴리기'],
+     [.35,[92,222,20,0],null,null,null,'공을 넘어 왼쪽에 착지'],
+     [.3,[182,248,0,0],[118,248,0,0],null,null,'제자리로'],
+     [.35,null,[122,214,0,.5],[122,200],null,'왼발 바닥을 공 위에'],
+     [.4,null,[172,214,0,.5],[172,200],'L','안쪽으로 굴리기'],
+     [.35,null,[208,222,-20,0],null,null,'공을 넘어 오른쪽에 착지'],
+     [.3,[182,248,0,0],[118,248,0,0],null,null,'제자리로']]},
+ {n:'롤 백 V',en:'Roll Back V',lr:false,
+  tips:['발바닥으로 공을 <b>몸 쪽으로 당기고</b>','같은 발 <b>안쪽</b>으로 대각선 앞으로 밀어 <b>V자</b>','반대발로 이어서 반대 대각선'],
+  ball:[185,186],
+  f:[[.35,[185,200,0,.5],[115,248,0,0],[185,186],null,'오른발 바닥을 공 위에'],
+     [.4,[160,255,0,.5],null,[155,240],'R','몸 쪽으로 당기기'],
+     [.25,[176,246,35,.1],null,null,null,'발 안쪽을 돌려'],
+     [.35,[166,236,35,0],null,[115,186],'R','대각선 앞으로 밀기 (V)'],
+     [.3,[185,248,0,0],null,null,null,'제자리'],
+     [.35,null,[115,200,0,.5],null,null,'왼발 바닥을 공 위에'],
+     [.4,null,[140,255,0,.5],[145,240],'L','몸 쪽으로 당기기'],
+     [.25,null,[124,246,-35,.1],null,null,'발 안쪽을 돌려'],
+     [.35,null,[134,236,-35,0],[185,186],'L','대각선 앞으로 밀기 (V)'],
+     [.3,null,[115,248,0,0],null,null,'제자리']]}
+];
+
+// Fill carried-over values & build start state
+function build(d,mirror){
+  var fr=[], last={R:NR,L:NL,B:d.ball};
+  // first pass to get final state for loop start
+  var st={R:NR.slice(),L:NL.slice(),B:d.ball.slice()};
+  d.f.forEach(function(f){ if(f[1])st.R=f[1]; if(f[2])st.L=f[2]; if(f[3])st.B=f[3]; });
+  var cur={R:st.R,L:st.L,B:st.B};
+  var start={R:cur.R,L:cur.L,B:cur.B};
+  d.f.forEach(function(f){
+    cur={R:f[1]||cur.R,L:f[2]||cur.L,B:f[3]||cur.B};
+    fr.push({d:f[0],R:cur.R,L:cur.L,B:cur.B,hit:f[4],cap:f[5]});
+  });
+  if(mirror){
+    var m=function(p){return [300-p[0],p[1],-p[2],p[3]];};
+    var sw=function(s){return s.replace(/오른/g,'#').replace(/왼/g,'오른').replace(/#/g,'왼');};
+    fr=fr.map(function(f){return {d:f.d,R:m(f.L),L:m(f.R),B:[300-f.B[0],f.B[1]],hit:f.hit==='R'?'L':(f.hit==='L'?'R':null),cap:sw(f.cap)};});
+    start={R:m(start.L),L:m(start.R),B:[300-start.B[0],start.B[1]]};
+  }
+  var T=0; fr.forEach(function(f){T+=f.d;});
+  return {fr:fr,start:start,T:T};
+}
+
+// ---------- SVG scene ----------
+var NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+var SHOE='M0,-27 C8,-27 12,-17 12,-7 L11,17 C11,24 6,27 0,27 C-6,27 -11,24 -11,17 L-12,-7 C-12,-17 -8,-27 0,-27Z';
+var uid=0;
+function scene(svg,small){
+  uid++;
+  svg.innerHTML='';
+  var defs=el('defs',{},svg);
+  var pat=el('pattern',{id:'grass'+uid,width:300,height:60,patternUnits:'userSpaceOnUse'},defs);
+  el('rect',{width:300,height:30,fill:'#2f8a45'},pat);el('rect',{y:30,width:300,height:30,fill:'#2a7d3e'},pat);
+  var cp=el('clipPath',{id:'bc'+uid},defs);el('circle',{r:16},cp);
+  el('rect',{width:300,height:330,fill:'url(#grass'+uid+')'},svg);
+  if(!small){
+    el('text',{x:150,y:24,'text-anchor':'middle',fill:'rgba(255,255,255,.55)','font-size':12,'font-weight':700},svg).textContent='▲ 앞쪽';
+    el('text',{x:150,y:320,'text-anchor':'middle',fill:'rgba(255,255,255,.35)','font-size':10},svg).textContent='위에서 내려다본 모습';
+  }
+  var g={};
+  g.bShadow=el('ellipse',{rx:16,ry:12,fill:'rgba(0,0,0,.25)'},svg);
+  var shadows=el('g',{},svg);
+  g.sR=el('path',{d:SHOE,fill:'rgba(0,0,0,.28)'},shadows);
+  g.sL=el('path',{d:SHOE,fill:'rgba(0,0,0,.28)'},shadows);
+  // ball
+  g.ball=el('g',{},svg);
+  el('circle',{r:16,fill:'#fafafa',stroke:'#222','stroke-width':1.2},g.ball);
+  g.bPat=el('g',{'clip-path':'url(#bc'+uid+')'},g.ball);
+  [[0,0],[-15,-9],[15,-9],[-10,14],[10,14],[0,-18]].forEach(function(p){
+    el('polygon',{points:pent(p[0],p[1],5.5),fill:'#1d1d1d'},g.bPat);
+  });
+  g.hit=el('circle',{r:16,fill:'none',stroke:'#c8f25a','stroke-width':3,opacity:0},svg);
+  g.feet=el('g',{},svg);
+  g.R=foot(g.feet,'#3b7bf0','R');
+  g.L=foot(g.feet,'#f28c28','L');
+  g.svg=svg;
+  return g;
+}
+function pent(cx,cy,r){var s=[];for(var i=0;i<5;i++){var a=-Math.PI/2+i*2*Math.PI/5;s.push((cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1));}return s.join(' ');}
+function foot(parent,col,lab){
+  var f=el('g',{},parent);
+  el('path',{d:SHOE,fill:col,stroke:'rgba(0,0,0,.45)','stroke-width':1.5},f);
+  el('path',{d:'M-7,-4 L7,-4 M-7,2 L7,2 M-6,8 L6,8',stroke:'rgba(255,255,255,.55)','stroke-width':1.6,'stroke-linecap':'round'},f);
+  el('text',{y:-12,'text-anchor':'middle','font-size':11,'font-weight':800,fill:'#fff'},f).textContent=lab;
+  return f;
+}
+function setFoot(g,s,sh,p){
+  var x=p[0],y=p[1],r=p[2],l=Math.max(0,p[3]);
+  var sc=1+0.16*l;
+  g.setAttribute('transform','translate('+x.toFixed(1)+','+(y-l*6).toFixed(1)+') rotate('+r.toFixed(1)+') scale('+sc.toFixed(3)+')');
+  sh.setAttribute('transform','translate('+(x+3+l*7).toFixed(1)+','+(y+3+l*3).toFixed(1)+') rotate('+r.toFixed(1)+')');
+  sh.setAttribute('opacity',(0.9-l*0.5).toFixed(2));
+  g.setAttribute('opacity',(1-0.3*Math.min(1,l*1.6)).toFixed(2));
+}
+function ease(p){return p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;}
+function lerp(a,b,p){return a+(b-a)*p;}
+function lerpFoot(a,b,p){
+  var e=ease(p),dx=b[0]-a[0],dy=b[1]-a[1],dist=Math.sqrt(dx*dx+dy*dy);
+  var arc=dist>12?0.7*Math.sin(Math.PI*p)*Math.min(1,dist/45):0;
+  return [lerp(a[0],b[0],e),lerp(a[1],b[1],e),lerp(a[2],b[2],e),lerp(a[3],b[3],e)+arc];
+}
+// returns {R,L,B,idx,hitAge}
+function sample(b,t){
+  t=((t%b.T)+b.T)%b.T;
+  var acc=0,prev=b.start;
+  for(var i=0;i<b.fr.length;i++){
+    var f=b.fr[i];
+    if(t<acc+f.d){
+      var p=(t-acc)/f.d;
+      var eb=ease(p);
+      return {R:lerpFoot(prev.R,f.R,p),L:lerpFoot(prev.L,f.L,p),B:[lerp(prev.B[0],f.B[0],eb),lerp(prev.B[1],f.B[1],eb)],idx:i,p:p};
+    }
+    acc+=f.d; prev=f;
+  }
+  var lf=b.fr[b.fr.length-1];return {R:lf.R,L:lf.L,B:lf.B,idx:b.fr.length-1,p:1};
+}
+function draw(g,s,b,spin,hitA){
+  setFoot(g.R,s,g.sR,s.R);setFoot(g.L,s,g.sL,s.L);
+  // lifted foot drawn on top
+  if(s.R[3]>=s.L[3])g.feet.appendChild(g.R);else g.feet.appendChild(g.L);
+  g.ball.setAttribute('transform','translate('+s.B[0].toFixed(1)+','+s.B[1].toFixed(1)+')');
+  g.bPat.setAttribute('transform','rotate('+spin.toFixed(1)+')');
+  g.bShadow.setAttribute('cx',(s.B[0]+4).toFixed(1));g.bShadow.setAttribute('cy',(s.B[1]+5).toFixed(1));
+  g.hit.setAttribute('cx',s.B[0]);g.hit.setAttribute('cy',s.B[1]);
+  g.hit.setAttribute('r',(16+(1-hitA)*12).toFixed(1));g.hit.setAttribute('opacity',hitA.toFixed(2));
+}
+
+// ---------- Home grid ----------
+var done={};
+try{var k='bm-done-'+new Date().toDateString();done=JSON.parse(localStorage.getItem(k)||'{}');}catch(e){}
+function saveDone(){try{localStorage.setItem('bm-done-'+new Date().toDateString(),JSON.stringify(done));}catch(e){}}
+var grid=document.getElementById('grid');
+function renderGrid(){
+  grid.innerHTML='';
+  DRILLS.forEach(function(d,i){
+    var c=document.createElement('button');c.className='card';
+    var svg=document.createElementNS(NS,'svg');svg.setAttribute('viewBox','40 140 220 160');
+    c.appendChild(svg);
+    var g=scene(svg,true),b=build(d,false),s=sample(b,b.fr[0].d*0.999);
+    draw(g,s,b,0,0);
+    c.insertAdjacentHTML('beforeend','<div class="no">'+(i+1<10?'0':'')+(i+1)+'</div><div class="nm">'+d.n+(d.lr?'<span class="tag">L/R</span>':'')+'</div><div class="en">'+d.en+' · 30초 × 3세트</div>'+(done[i]?'<div class="done">✓ '+done[i]+'세트</div>':''));
+    c.onclick=function(){open(i,false);};
+    grid.appendChild(c);
+  });
+}
+renderGrid();
+
+// ---------- Detail ----------
+var stageSvg=document.getElementById('stage'),G=scene(stageSvg,false);
+var cur=0,side='R',speed=1,paused=false,sound=false,B=null,clock=0,lastTs=0,spin=0,lastB=null,lastIdx=-1,hitT=0;
+var capEl=document.getElementById('cap'),dotsEl=document.getElementById('dots');
+var actx=null;
+function beep(f,dur,vol){
+  if(!actx)return;
+  try{var o=actx.createOscillator(),gn=actx.createGain();o.frequency.value=f;o.type='sine';gn.gain.value=vol||.15;o.connect(gn);gn.connect(actx.destination);var t=actx.currentTime;gn.gain.setValueAtTime(vol||.15,t);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);o.start(t);o.stop(t+dur);}catch(e){}
+}
+function ensureAudio(){try{if(!actx){var AC=window.AudioContext||window.webkitAudioContext;if(AC)actx=new AC();}if(actx&&actx.resume)actx.resume();}catch(e){}}
+
+function open(i,keepTimer){
+  cur=i;var d=DRILLS[i];
+  if(!keepTimer){side='R';}
+  document.getElementById('home').classList.add('off');
+  document.getElementById('detail').classList.add('on');
+  document.getElementById('dName').textContent=(i+1)+'. '+d.n;
+  document.getElementById('dEn').textContent=d.en;
+  document.getElementById('dMeta').textContent=d.lr?'30초 × 3세트 · 오른발/왼발 번갈아':'30초 × 3세트';
+  document.getElementById('dTips').innerHTML=d.tips.map(function(t){return '<li>'+t+'</li>';}).join('');
+  rebuild();
+  window.scrollTo(0,0);
+}
+function rebuild(){
+  B=build(DRILLS[cur],side==='L');clock=0;lastIdx=-1;lastB=null;
+  dotsEl.innerHTML=B.fr.map(function(){return '<i></i>';}).join('');
+  setSeg('sideSeg',side);
+}
+function setSeg(id,v){var bs=document.getElementById(id).querySelectorAll('button');for(var i=0;i<bs.length;i++)bs[i].classList.toggle('on',bs[i].getAttribute('data-v')==String(v));}
+function loop(ts){
+  var dt=lastTs?Math.min(.05,(ts-lastTs)/1000):0;lastTs=ts;
+  if(B&&document.getElementById('detail').classList.contains('on')){
+    if(!paused)clock+=dt*speed;
+    var s=sample(B,clock);
+    if(lastB){var dx=s.B[0]-lastB[0],dy=s.B[1]-lastB[1];spin+=(dx-dy)*3.2;}
+    lastB=s.B;
+    if(s.idx!==lastIdx){
+      // hit of previous frame completes at its end
+      if(lastIdx>=0&&B.fr[lastIdx].hit){hitT=1;if(sound)beep(B.fr[lastIdx].hit==='R'?880:660,.08,.12);}
+      lastIdx=s.idx;
+      capEl.textContent=B.fr[s.idx].cap;
+      var ds=dotsEl.children;for(var i=0;i<ds.length;i++)ds[i].className=i===s.idx?'on':'';
+    }
+    hitT=Math.max(0,hitT-dt*4);
+    draw(G,s,B,spin,hitT);
+  }
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+document.getElementById('backBtn').onclick=function(){stopTimer();document.getElementById('detail').classList.remove('on');document.getElementById('home').classList.remove('off');renderGrid();};
+document.getElementById('prevBtn').onclick=function(){stopTimer();open((cur+9)%10);};
+document.getElementById('nextBtn').onclick=function(){stopTimer();open((cur+1)%10);};
+document.getElementById('speedSeg').onclick=function(e){var v=e.target.getAttribute('data-v');if(!v)return;speed=+v;setSeg('speedSeg',v);};
+document.getElementById('sideSeg').onclick=function(e){var v=e.target.getAttribute('data-v');if(!v)return;side=v;rebuild();};
+document.getElementById('pauseBtn').onclick=function(){paused=!paused;this.textContent=paused?'▶ 재생':'⏸ 멈춤';};
+document.getElementById('soundBtn').onclick=function(){sound=!sound;ensureAudio();this.textContent=sound?'🔊 소리':'🔇 소리';};
+
+// ---------- Workout timer ----------
+var WORK=30,REST=15,READY=3;
+var tm=null; // {queue:[{drill,set,side}], qi, phase, left}
+var tEl=document.getElementById('timer'),tPhase=document.getElementById('tPhase'),tBig=document.getElementById('tBig'),tBar=document.getElementById('tBar'),tSet=document.getElementById('tSet'),startBtn=document.getElementById('startBtn');
+function makeQueue(drills){
+  var q=[];drills.forEach(function(di){for(var s=1;s<=3;s++)q.push({d:di,set:s,side:DRILLS[di].lr?(s===2?'L':'R'):'R'});});return q;
+}
+function startTimer(q){
+  ensureAudio();
+  tm={q:q,qi:0,phase:'ready',left:READY,tick:null};
+  applyItem();
+  tEl.classList.add('on');startBtn.style.display='none';
+  renderTimer();
+  tm.tick=setInterval(step,1000);
+}
+function applyItem(){
+  var it=tm.q[tm.qi];
+  if(cur!==it.d){open(it.d,true);}
+  if(side!==it.side){side=it.side;rebuild();}
+}
+function step(){
+  if(!tm)return;
+  tm.left--;
+  if(tm.phase==='ready'&&tm.left>0)beep(520,.12,.18);
+  if(tm.phase==='work'&&tm.left<=3&&tm.left>0)beep(520,.12,.18);
+  if(tm.left<=0){
+    if(tm.phase==='ready'||tm.phase==='rest'){tm.phase='work';tm.left=WORK;beep(990,.35,.25);paused=false;}
+    else{ // work finished
+      var it=tm.q[tm.qi];done[it.d]=Math.max(done[it.d]||0,it.set);saveDone();
+      beep(740,.5,.25);
+      tm.qi++;
+      if(tm.qi>=tm.q.length){finishTimer();return;}
+      tm.phase='rest';tm.left=REST;applyItem();
+    }
+  }
+  renderTimer();
+}
+function renderTimer(){
+  if(!tm)return;var it=tm.q[tm.qi],d=DRILLS[it.d];
+  var label={ready:'준비',work:'운동!',rest:'휴식 · 다음 준비'}[tm.phase];
+  tPhase.textContent=label+(d.lr?' · '+(it.side==='R'?'오른발':'왼발'):'');
+  tBig.textContent=tm.left;tBig.className='tbig'+(tm.phase==='work'?' work':'');
+  var tot=tm.phase==='work'?WORK:(tm.phase==='rest'?REST:READY);
+  tBar.style.width=((1-tm.left/tot)*100)+'%';
+  var multi=tm.q.length>3;
+  tSet.textContent=(multi?(it.d+1)+'/10 '+d.n+' · ':'')+it.set+'/3세트';
+}
+function finishTimer(){
+  clearInterval(tm.tick);tm=null;
+  tPhase.textContent='완료!';tBig.textContent='👏';tBig.className='tbig work';tBar.style.width='100%';tSet.textContent='수고했어요';
+  setTimeout(function(){if(!tm){tEl.classList.remove('on');startBtn.style.display='';}},2500);
+}
+function stopTimer(){if(tm){clearInterval(tm.tick);tm=null;}tEl.classList.remove('on');startBtn.style.display='';}
+startBtn.onclick=function(){startTimer(makeQueue([cur]));};
+document.getElementById('stopBtn').onclick=stopTimer;
+document.getElementById('routineBtn').onclick=function(){open(0);startTimer(makeQueue([0,1,2,3,4,5,6,7,8,9]));};
+})();
+</script>
+</body>
+</html>

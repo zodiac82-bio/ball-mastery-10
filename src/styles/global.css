@@ -1,0 +1,38 @@
+/* 디자인 토큰: 프로토타입과 같은 색. 야외에서도 보이게 대비를 높게 유지한다. */
+:root {
+  --bg: #0f1a14;
+  --card: #17261d;
+  --line: #2a3d31;
+  --txt: #eef5f0;
+  --mute: #9fb4a6;
+  --accent: #c8f25a;
+  --on-accent: #13200f;
+  --right: #3b7bf0;
+  --left: #f28c28;
+  --tap: 48px; /* 버튼 최소 터치 크기 */
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--txt);
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  cursor: pointer;
+  min-height: var(--tap);
+  min-width: var(--tap);
+}

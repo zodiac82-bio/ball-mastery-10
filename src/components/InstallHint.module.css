@@ -1,0 +1,22 @@
+.hint {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-top: 20px;
+}
+.text {
+  flex: 1 1 260px;
+  margin: 4px 12px 4px 0;
+}
+.title {
+  display: block;
+  font-size: 18px;
+}
+.body {
+  display: block;
+  font-size: 16px;
+  color: var(--mute);
+  line-height: 1.5;
+  margin-top: 4px;
+}

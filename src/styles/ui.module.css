@@ -1,0 +1,101 @@
+/*
+ * 공용 UI 조각.
+ * 주의: 구형 Safari(12~14.0)는 flex 컨테이너의 gap을 지원하지 않는다.
+ * flex 안의 간격은 margin으로 주고, gap은 grid에서만 쓴다.
+ */
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  padding-left: calc(16px + env(safe-area-inset-left));
+  padding-right: calc(16px + env(safe-area-inset-right));
+  /* 홈 화면 앱은 상태 표시줄 아래까지 그리므로 그만큼 내린다 */
+  padding-top: calc(20px + env(safe-area-inset-top));
+  padding-bottom: calc(40px + env(safe-area-inset-bottom));
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+/* 버튼처럼 보이는 것들(button, a 공통) */
+.btn,
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tap);
+  min-width: var(--tap);
+  padding: 0 18px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn {
+  background: var(--card);
+  color: var(--txt);
+  border: 1px solid var(--line);
+}
+.btnPrimary {
+  background: var(--accent);
+  color: var(--on-accent);
+  border: 1px solid var(--accent);
+}
+.btn:disabled,
+.btnPrimary:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.btn:active,
+.btnPrimary:active {
+  opacity: 0.8;
+}
+
+/* 여러 개 중 하나를 고르는 묶음 버튼 */
+.seg {
+  display: inline-flex;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.segBtn,
+.segOn {
+  padding: 0 14px;
+  background: transparent;
+  font-size: 17px;
+  color: var(--mute);
+  white-space: nowrap;
+}
+.segOn {
+  background: var(--line);
+  color: var(--txt);
+  font-weight: 700;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 8px;
+  color: var(--mute);
+  margin-left: 6px;
+  vertical-align: middle;
+  font-weight: 400;
+}
+
+a:focus,
+button:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+  outline: none;
+}

@@ -1,0 +1,170 @@
+.top {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.top > * + * {
+  margin-left: 8px;
+}
+.spacer {
+  flex: 1;
+}
+
+/* 세로: 애니메이션 위, 정보 아래 */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-gap: 18px;
+  gap: 18px;
+}
+.stageCard {
+  padding: 12px;
+}
+.stageBox {
+  margin: 0 auto;
+  /* 장면 비율 300:330. 세로 화면에서 높이가 화면의 절반쯤 되도록 폭을 제한 */
+  max-width: calc(52vh * 0.909);
+  min-width: 240px;
+}
+.stage {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+/* 가로(iPad 가로 등): 애니메이션 왼쪽, 정보 오른쪽 */
+@media (orientation: landscape) and (min-width: 700px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .stageBox {
+    max-width: calc((100vh - 330px) * 0.909);
+  }
+  .stageCard {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+  .timer,
+  .info {
+    grid-column: 2;
+  }
+}
+
+/* 세로: 타이머를 맨 위에 둬서 멀리서도 숫자가 보이게 */
+.timer {
+  order: -1;
+}
+@media (orientation: landscape) and (min-width: 700px) {
+  .timer {
+    order: 0;
+  }
+}
+
+.caption {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  min-height: 34px;
+  margin: 10px 0 4px;
+}
+.dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.dot,
+.dotOn {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--line);
+  display: block;
+  margin: 3px;
+}
+.dotOn {
+  background: var(--accent);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 8px -4px -4px;
+}
+.controls > * {
+  margin: 4px;
+}
+
+.name {
+  margin: 0;
+  font-size: 28px;
+}
+.en {
+  color: var(--mute);
+  font-size: 16px;
+  margin-top: 2px;
+}
+.meta {
+  margin: 10px 0 12px;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.legend {
+  display: flex;
+  font-size: 15px;
+  color: var(--mute);
+  margin-bottom: 14px;
+}
+.legend > * + * {
+  margin-left: 16px;
+}
+.legendR::before,
+.legendL::before,
+.legendBall::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  margin-right: 6px;
+  vertical-align: -1px;
+}
+.legendR::before {
+  background: var(--right);
+}
+.legendL::before {
+  background: var(--left);
+}
+.legendBall::before {
+  background: #fff;
+  border-radius: 50%;
+}
+
+.tips {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+.tips li {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 18px;
+  line-height: 1.45;
+}
+.tips li b {
+  color: var(--accent);
+}
+
+.start {
+  width: 100%;
+  min-height: 56px;
+  font-size: 20px;
+  margin-bottom: 14px;
+}
