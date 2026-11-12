@@ -3,6 +3,8 @@
 유소년 축구 선수(초등학생)를 위한 볼마스터리 훈련 웹앱(PWA).
 동작을 애니메이션으로 보고 → 30초 × 3세트 타이머로 따라 하고 → 기록을 쌓는다.
 
+**배포 주소: https://zodiac82-bio.github.io/ball-mastery-10/** (`main`에 푸시하면 자동으로 다시 배포된다)
+
 > 현재 상태: **8단계까지 모두 완료.** 실제 iPad에서의 확인(아래 "실기기에서 확인할 것")만 남았다.
 
 ## 실행
@@ -55,6 +57,10 @@ Playwright를 처음 쓰는 컴퓨터에서는 테스트용 브라우저를 한 
 3. Node.js 버전을 24.x로 맞춘다(Project Settings → General).
 
 저장소 없이 올리려면 `npm run build` 후 `npx vercel deploy dist --prod`.
+
+### 의존성을 바꿨을 때 주의
+
+`package.json`의 의존성을 추가·변경한 뒤 GitHub Actions의 `npm ci`가 "package.json and package-lock.json are in sync" 오류로 실패하면, lock 파일에 리눅스용 선택 의존성이 빠진 것이다. `rm -rf node_modules package-lock.json && npm install`로 lock 파일을 처음부터 다시 만들면 해결된다.
 
 ### 새 버전 올린 뒤
 
