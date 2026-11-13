@@ -52,6 +52,14 @@
   }
 }
 
+/* 휴대폰 가로처럼 높이가 낮은 화면: 장면이 한 화면에 들어오게 줄인다 */
+@media (orientation: landscape) and (min-width: 700px) and (max-height: 520px) {
+  .stageBox {
+    max-width: calc((100vh - 96px) * 0.909);
+    min-width: 200px;
+  }
+}
+
 /* 세로: 타이머를 맨 위에 둬서 멀리서도 숫자가 보이게 */
 .timer {
   order: -1;

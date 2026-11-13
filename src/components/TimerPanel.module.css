@@ -81,3 +81,17 @@
     margin-top: 8px;
   }
 }
+
+/* 휴대폰 가로처럼 높이가 낮은 화면 */
+@media (orientation: landscape) and (max-height: 520px) {
+  .panel {
+    padding: 10px 14px;
+  }
+  .big,
+  .bigWork {
+    font-size: 72px;
+  }
+  .set {
+    margin-bottom: 8px;
+  }
+}

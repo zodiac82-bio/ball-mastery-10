@@ -22,7 +22,7 @@ npm run preview      # 빌드 결과 미리보기 (http://localhost:4173, 서비
 
 ```bash
 npm test             # 단위 테스트 (Vitest, 93개)
-npm run test:e2e     # 빌드 후 Playwright 스모크 테스트 (iPad 가로·세로 WebKit + Chromium, 27개)
+npm run test:e2e     # 빌드 후 Playwright 스모크 테스트 (iPad 가로·세로, Android 휴대폰·태블릿, 데스크톱. 66개)
 npm run check:legacy # 구형 Safari용 번들에 최신 문법이 남지 않았는지 검사 (빌드 후)
 npm run check        # 타입·린트·포맷·단위 테스트·빌드·구형 문법 검사를 한 번에
 npm run lint
@@ -65,6 +65,26 @@ Playwright를 처음 쓰는 컴퓨터에서는 테스트용 브라우저를 한 
 ### 새 버전 올린 뒤
 
 기기는 새 파일을 백그라운드로 받아 두고 **다음에 앱을 열 때** 적용한다. 바로 확인하려면 앱을 완전히 닫았다가 두 번 연다.
+
+## Android에서 쓰기
+
+별도의 Android 앱을 만들지 않고, **같은 웹앱을 Android Chrome에서 설치해 쓴다.** 코드가 하나라서 고치면 iPad와 Android에 함께 반영된다.
+
+1. Android 휴대폰·태블릿의 Chrome으로 배포 주소를 연다.
+2. 홈 화면 맨 아래 안내의 **"앱 설치"** 버튼을 누른다. 버튼이 안 보이면 Chrome 메뉴(⋮) → "앱 설치" 또는 "홈 화면에 추가".
+3. 홈 화면 아이콘으로 한 번 열어 두면 인터넷 없이도 동작한다.
+
+iPad와 다른 점:
+
+|                | Android Chrome                                                 | iPad Safari                                      |
+| -------------- | -------------------------------------------------------------- | ------------------------------------------------ |
+| 설치           | 앱 안의 "앱 설치" 버튼                                         | 공유 버튼 → 홈 화면에 추가 (버튼을 만들 수 없음) |
+| 화면 꺼짐 방지 | 동작함                                                         | Safari 16.4 이상만                               |
+| 아이콘 모양    | 기기 테마에 맞춰 원형·둥근 사각형으로 잘림(마스크 아이콘 지원) | 둥근 사각형                                      |
+
+- "앱 설치" 버튼은 Chrome이 "설치할 수 있다"고 알려 줄 때(`beforeinstallprompt`)만 나타난다. 이미 설치했거나 Chrome이 아직 판단하지 않았으면 글 안내만 보인다. 삼성 인터넷·Firefox는 메뉴에서 직접 추가해야 한다.
+- 휴대폰 세로(폭 412px), 휴대폰 가로(높이 360px), 태블릿 크기에서 자동 테스트한다(`android-phone`, `android-phone-landscape`, `android-tablet`).
+- 진짜 Android 앱 파일(APK)이나 Play 스토어 등록이 필요해지면 지금 빌드 결과를 Capacitor 같은 도구로 감싸면 된다. Java와 Android SDK가 필요해서 지금은 하지 않았다.
 
 ## 번들 용량
 
@@ -150,12 +170,12 @@ src/
   storage/stats.ts      이번 주·연속 운동일·누적 계산
   storage/settings.ts   설정 저장, 범위 제한
   styles/global.css     디자인 토큰, 전역 스타일
-  pwa/install.ts        홈 화면 추가 안내 종류 판단 (iOS / 그 밖 / 이미 설치)
+  pwa/install.ts        홈 화면 추가 안내 종류 판단, Android 설치 창 띄우기
   components/InstallHint.tsx  홈 화면 추가 안내 문구
 scripts/make-icons.mjs  아이콘 PNG 생성 (Node만 사용)
 scripts/check-legacy.mjs  구형 Safari용 번들 문법 검사
 tests/smoke.spec.ts     Playwright 스모크 테스트
-playwright.config.ts    iPad 가로·세로(WebKit) + Chromium
+playwright.config.ts    iPad 가로·세로(WebKit) + Android 휴대폰·태블릿 + 데스크톱(Chromium)
 .github/workflows/deploy.yml  GitHub Pages 배포
 public/icons/           앱 아이콘 (192, 512, apple-touch 180, favicon 48)
 ```

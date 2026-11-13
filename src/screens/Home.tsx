@@ -62,8 +62,9 @@ export function Home({ config, doneToday, onStartRoutine }: HomeProps) {
                   {d.nameKo}
                   {d.sidesLR && <span className={ui.tag}>L/R</span>}
                 </span>
-                <span className={styles.en}>
-                  {d.nameEn} · {config.work}초 × {config.sets}세트
+                <span className={styles.en}>{d.nameEn}</span>
+                <span className={styles.meta}>
+                  {config.work}초 × {config.sets}세트
                 </span>
               </a>
             </li>

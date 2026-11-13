@@ -30,6 +30,10 @@ export default defineConfig({
     // iPad Safari와 같은 엔진(WebKit), 같은 화면 크기
     { name: 'ipad-landscape', use: { ...devices['iPad (gen 7) landscape'] } },
     { name: 'ipad-portrait', use: { ...devices['iPad (gen 7)'] } },
+    // Android Chrome과 같은 엔진(Chromium), 휴대폰·태블릿 화면 크기
+    { name: 'android-phone', use: { ...devices['Pixel 7'] } },
+    { name: 'android-phone-landscape', use: { ...devices['Pixel 7 landscape'] } },
+    { name: 'android-tablet', use: { ...devices['Galaxy Tab S4'] } },
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
   ],
 });

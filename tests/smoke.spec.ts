@@ -41,6 +41,14 @@ test('홈: 10개 동작 카드와 범례가 보인다', async ({ page }, info) =
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(overflow).toBeLessThanOrEqual(0);
+  // 장갑을 끼고도 누를 수 있게 모든 버튼·링크가 48px 이상
+  const small = await page.evaluate(
+    () =>
+      Array.from(document.querySelectorAll('button, a'))
+        .map((el) => el.getBoundingClientRect())
+        .filter((r) => r.width > 0 && (r.width < 48 || r.height < 48)).length,
+  );
+  expect(small).toBe(0);
   await shot(page, info, 'home');
   expect(errors).toEqual([]);
 });
@@ -257,6 +265,51 @@ test('구형 브라우저용(legacy) 번들만으로도 앱이 뜬다', async ({
   const a = await footTransform(page);
   await expect.poll(() => footTransform(page)).not.toBe(a);
   expect(pageErrors).toEqual([]);
+});
+
+test('Android: 브라우저가 설치를 허용하면 "앱 설치" 버튼이 뜨고, 누르면 설치 창을 띄운다', async ({
+  page,
+}) => {
+  const errors = collectErrors(page);
+  await page.goto('./');
+  const hint = page.locator('[data-install-hint]');
+  await expect(hint).toBeVisible();
+  await expect(hint.getByRole('button', { name: '앱 설치' })).toHaveCount(0);
+
+  // Chrome이 보내는 beforeinstallprompt를 흉내 낸다(실제 설치 창은 자동 테스트로 띄울 수 없다)
+  await page.evaluate(() => {
+    const w = window as unknown as { __prompted: number };
+    w.__prompted = 0;
+    const event = new Event('beforeinstallprompt', { cancelable: true });
+    Object.assign(event, {
+      prompt: () => {
+        w.__prompted++;
+        return Promise.resolve();
+      },
+      userChoice: Promise.resolve({ outcome: 'accepted' }),
+    });
+    window.dispatchEvent(event);
+  });
+
+  const button = hint.getByRole('button', { name: '앱 설치' });
+  await expect(button).toBeVisible();
+  await button.click();
+  expect(await page.evaluate(() => (window as unknown as { __prompted: number }).__prompted)).toBe(
+    1,
+  );
+  // 설치를 수락하면 안내가 사라진다
+  await expect(hint).toHaveCount(0);
+  expect(errors).toEqual([]);
+});
+
+test('홈 화면 추가 안내는 닫으면 다시 나오지 않는다', async ({ page }) => {
+  await page.goto('./');
+  const hint = page.locator('[data-install-hint]');
+  await hint.getByRole('button', { name: '닫기' }).click();
+  await expect(hint).toHaveCount(0);
+  await page.reload();
+  await expect(page.locator('ul a')).toHaveCount(10);
+  await expect(hint).toHaveCount(0);
 });
 
 test.describe('오프라인', () => {
